@@ -17,6 +17,7 @@ interface StringArrayList
     public boolean contains(String str);
     public boolean isEmpty();
     public boolean isFull();
+    public Iterator getIterator();
 }
 
 class ArrayList implements StringArrayList
@@ -237,17 +238,87 @@ class ArrayList implements StringArrayList
     }
     
     /**
+     * The getIterator method returns the iterator that will 
+     * be used for iteration of the ArrayList class.
+     */
+     public Iterator getIterator()
+     {
+     	return new Iterator(this);
+     }
+    
+    /**
      * @return The elements of the array and converts it to string.
      */
     public String toString()
     {
         StringBuilder builder = new StringBuilder();
-        builder.append("The elements of the String arrayy: ");
+        builder.append("The elements of the String array: ");
         for(int index = 0; index < elems; index++)
-            builder.append(arrayList[index]);
+            builder.append(arrayList[index] + " ");
         return builder.toString();
     }
 }
+
+interface IteratorType
+{
+	public boolean hasNext();
+	public String next();
+	public void remove();
+}
+	
+class Iterator
+{
+	private ArrayList theList;
+	private boolean canRemove;
+	private int prev;
+		
+	/*
+	 * The constructor method initializes the Iterator object.
+	 * @param list The object that will be iterated.
+	 */
+	public Iterator(ArrayList list)
+	{
+		theList = list;
+		canRemove = false;
+		prev = -1;
+	}
+		
+	/**
+ 	 * The hasNext method returns true if the next String of 
+ 	 * the theList object exists, otherwise return false.
+ 	 */
+	public boolean hasNext()
+	{
+		return (prev + 1 < theList.size());
+	}
+	
+	/**
+	 * The next method returns the Strings of the specified 
+	 * location, otherwise returns false.
+	 */
+	public String next()
+	{
+		if(hasNext())
+		{
+			prev++;
+			canRemove = true;
+			return theList.get(prev);
+		}
+		else
+			return null;
+	}
+	
+	/**
+	 * The remove method removes the String at the 
+	 * specified location.
+     */
+	public void remove()
+	{
+		theList.remove(prev);
+		prev--;
+		canRemove = false;
+	}
+}	
 
 /**
  * The program test drive.
@@ -302,6 +373,43 @@ public class ArrayListImplementation
         
         // Display the String array elements
         displayList(myList);
+        
+            	// ~ An Iterator Test Drive~ 
+    
+		// Add three Strings to the String LinkedList
+		String[] nums2 = {"One", "Two", "Three"};
+		for(String s : nums2)
+		    myList.add(s);
+    	
+		// Display the result
+        System.out.println(myList);
+        
+        // Create three new Object Iterator
+        Iterator iterator1 = myList.getIterator();
+        Iterator iterator2 = myList.getIterator();
+        Iterator iterator3 = myList.getIterator();
+        
+        System.out.print ("Printing using the Iterator: ");
+        // Iterate through the LinkedList and get the elemenents of the LinkedList
+        while(iterator1.hasNext())
+        	System.out.print(iterator1.next() + " ");
+        System.out.println();
+        
+        // Iterate through the LinkedList and remove all the elemenents of the LinkedList
+        while(iterator2.hasNext())
+        {
+        	iterator2.next();
+        	iterator2.remove();
+        }
+        
+        // Check the result with the toString method
+        System.out.println(myList);
+                        
+        System.out.print ("Printing using the Iterator: ");
+        // Iterate through the LinkedList and get the elemenents of the LinkedList
+        while(iterator3.hasNext())
+        	System.out.print(iterator3.next() + " ");
+        System.out.println();
     }
     
     public static void displayList(StringArrayList theList)
